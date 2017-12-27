@@ -270,7 +270,9 @@ def is_logged_in(f):
             return redirect(url_for('login'))
     return wrap
 
+
 @app.route('/profile')
+@is_logged_in
 def profile():
     if 'logged_in' in session:
         uc.__enter__()
