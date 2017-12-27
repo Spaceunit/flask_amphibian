@@ -11,6 +11,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, validators
 from werkzeug.utils import secure_filename
 from passlib.hash import sha256_crypt
+from functools import wraps
 from passlib.hash import md5_crypt
 import cx_Oracle
 os.environ['NLS_LANG'] = 'American_America.AL32UTF8'
@@ -259,9 +260,19 @@ def login():
     return render_template('login.html')
 
 
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please login', 'danger')
+            return redirect(url_for('login'))
+    return wrap
+
 @app.route('/profile')
 def profile():
-    if session['logged_in']:
+    if 'logged_in' in session:
         uc.__enter__()
         user_role = uc.get_user_role(session['username'])
         uc.__exit__()
