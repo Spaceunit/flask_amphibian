@@ -264,6 +264,7 @@ def profile():
         uc.__enter__()
         user_role = uc.get_user_role(session['username'])
         u_fsl = uc.get_user_fsl_name(session['username'], user_role)
+        session['user_role'] = user_role
         uc.__exit__()
         if user_role == 'None':
             return redirect('logout')
@@ -271,6 +272,19 @@ def profile():
         return render_template('profile.html', user_role=user_role, f_name=u_fsl[0], s_name=u_fsl[1], l_name=u_fsl[2])
     else:
         return redirect(url_for('index'))
+
+
+@app.remuve_emp('/manage_emp')
+@is_logged_in
+def manage_emp():
+    if 'logged_in' in session:
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_emp.html')
+
 
 
 @app.route('/logout')

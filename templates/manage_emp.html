@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+      <div class="row">
+        <div class="col-md-6">
+          <h1 class="">Team_name</h1>
+        </div>
+        <div class="col-md-6 text-right">
+          <a class="btn btn-primary" href="">Schedule</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead">Type_name</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead">Description</p>
+          <p class="">Paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <a href="#" class="btn btn-outline-primary">Edit profile
+            <br> </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <div class="btn-group">
+            <a href="#" class="btn btn-primary">Add member</a>
+            <a href="#" class="btn btn-primary">Remuve member</a>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="col-md-12">
+                <p class="lead text-right">Sort by</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="btn-group" data-toggle="buttons"> <label class="btn btn-primary active">First name</label> <label class="btn btn-primary">Second name</label> <label class="btn btn-primary">Last name</label> <label class="btn btn-primary">
+    <input type="radio" name="options" id="option3" autocomplete="off" value="on"> Sport rank</label> </div>
+            </div>
+            <div class="col-md-4">
+              <form class="form-inline m-0">
+                <input class="form-control mr-2" type="text" placeholder="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>First name</th>
+                <th>Second name</th>
+                <th>Last name</th>
+                <th>Sport rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>First_name_1</td>
+                <td>Second_name_1</td>
+                <td>Last_name_1</td>
+                <td>SportRank</td>
+              </tr>
+              <tr>
+                <td>Firts_name_2</td>
+                <td>Second_name_2</td>
+                <td>Last_name_2</td>
+                <td>SportRank</td>
+              </tr>
+              <tr>
+                <td>First_name_2</td>
+                <td>Second_name_3</td>
+                <td>Last_name_3</td>
+                <td>SportRank</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+{% endblock %}
