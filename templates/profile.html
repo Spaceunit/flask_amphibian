@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    {% if user_role == 'Admin' %}
+        <p>ADMIN</p>
+    {% elif user_role == 'Coach'%}
+        <p>COACH</p>
+    {% elif user_role == 'Client'%}
+        <p>CLIENT</p>
+    {% elif user_role == 'Guest'%}
+        <p>GUEST</p>
+    {% else %}
+        <p>YOLO</p>
+    {% endif %}
+{% endblock %}
