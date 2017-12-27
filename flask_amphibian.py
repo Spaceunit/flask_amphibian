@@ -1,4 +1,5 @@
 import os
+from connection_config import db_connect, db_user, db_password
 import time
 import random
 from flask import Flask, url_for, session, redirect, escape, request, logging, flash
@@ -17,9 +18,9 @@ import cx_Oracle
 os.environ['NLS_LANG'] = 'American_America.AL32UTF8'
 UPLOAD_FOLDER = 'media/med_doc'
 ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif', 'pdf'])
-db_user = os.environ.get('DBAAS_USER_NAME', 'POLSHCHAK')
-db_password = os.environ.get('DBAAS_USER_PASSWORD', 'Qwer1234')
-db_connect = os.environ.get('DBAAS_DEFAULT_CONNECT_DESCRIPTOR', "192.168.56.101:1521/xe")
+# db_user = os.environ.get('DBAAS_USER_NAME', 'POLSHCHAK')
+# db_password = os.environ.get('DBAAS_USER_PASSWORD', 'Qwer1234')
+# db_connect = os.environ.get('DBAAS_DEFAULT_CONNECT_DESCRIPTOR', "192.168.56.101:1521/xe")
 images = UploadSet('images', IMAGES)
 # SESSION_TYPE = 'cookie'
 

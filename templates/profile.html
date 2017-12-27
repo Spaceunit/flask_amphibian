@@ -2,7 +2,30 @@
 
 {% block body %}
     {% if user_role == 'Admin' %}
-        <p>ADMIN</p>
+        <H>ADMIN</H>
+      <div class="row">
+        <div class="col-md-6 text-center">
+          <p class="lead text-right">Pool's setup</p>
+        </div>
+        <div class="col-md-6 text-left">
+          <div class="btn-group">
+            <a href="#" class="btn btn-primary">Pools schedule</a>
+            <a href="#" class="btn btn-primary">Open</a>
+            <a href="#" class="btn btn-primary">Close</a>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p class="lead text-right">Stuff setup</p>
+        </div>
+        <div class="col-md-6 text-left">
+          <div class="btn-group">
+            <a href="#" class="btn btn-primary">Add Сo-worker</a>
+            <a href="#" class="btn btn-primary">Remuve Сo-worker</a>
+          </div>
+        </div>
+      </div>
     {% elif user_role == 'Coach'%}
         <p>COACH</p>
     {% elif user_role == 'Client'%}
