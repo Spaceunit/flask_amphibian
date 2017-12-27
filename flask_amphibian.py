@@ -106,7 +106,7 @@ class UserCreation:
         user_fsl = ()
         try:
             self.__cursor.execute("""SELECT FIRST_NAME, SECOND_NAME, LAST_NAME FROM "{0}" WHERE 
-                                                EMAIL='{1}' """.format(login_candidate, role))
+                                                EMAIL='{1}' """.format(role, login_candidate))
             user_fsl = self.__cursor.fetchone()
         except cx_Oracle.DatabaseError:
             flash('ERROR')
