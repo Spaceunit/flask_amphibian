@@ -102,6 +102,16 @@ class UserCreation:
             flash('ERROR')
         return user_role
 
+    def get_user_fsl_name(self, login_candidate, role):
+        user_fsl = ()
+        try:
+            self.__cursor.execute("""SELECT FIRST_NAME, SECOND_NAME, LAST_NAME FROM "{0}" WHERE 
+                                                EMAIL='{1}' """.format(login_candidate, role))
+            user_fsl = self.__cursor.fetchone()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR')
+        return user_fsl
+
     def add_user(self, email, password, first_name, second_name, last_name, address, phone, med_doc, sport_rank,
                  birthday):
         try:
@@ -253,10 +263,11 @@ def profile():
     if 'logged_in' in session:
         uc.__enter__()
         user_role = uc.get_user_role(session['username'])
+        u_fsl = uc.get_user_fsl_name(session['username'], user_role)
         uc.__exit__()
         if user_role == 'None':
             return redirect('logout')
-        return render_template('profile.html', user_role=user_role)
+        return render_template('profile.html', user_role=user_role, f_name=u_fsl(0), s_name=u_fsl(1), l_name=u_fsl(2))
     else:
         return redirect(url_for('index'))
 

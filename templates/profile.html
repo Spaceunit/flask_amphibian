@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    {% if user_role == 'Admin' %}
       <div class="row">
         <div class="col-md-12">
-          <h1 class="">First_name Second_name Last_name</h1>
+          <h1 class="">{{ f_name }} {{ s_name }} {{ l_name }}</h1>
         </div>
       </div>
+    {% if user_role == 'Admin' %}
       <div class="row">
         <div class="col-md-12">
           <p class="lead">Pool Administrator</p>
