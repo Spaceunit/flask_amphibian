@@ -73,7 +73,6 @@ class UserInsertGenerator(InsertGenerator):
 
 class UserCreation:
     def __enter__(self):
-        # self.__db = cx_Oracle.Connection("hr/hrpwd@//localhost:1521/XE")
         self.__db = cx_Oracle.connect(db_user, db_password, db_connect)
         self.__cursor = self.__db.cursor()
         return self
@@ -103,44 +102,20 @@ class UserCreation:
             flash('ERROR')
         return user_role
 
-
-    def add_user(self, email, password, first_name, second_name, last_name, address, phone, med_doc, sport_rank, birthday):
-        # user_id = self.__cursor.var(cx_Oracle.NUMBER)
-        # self.__cursor.callproc("WORK_PACK.createUser", [(0, email, password, first_name, second_name, last_name, address, phone, ' ', sport_rank, birthday, 1)])
+    def add_user(self, email, password, first_name, second_name, last_name, address, phone, med_doc, sport_rank,
+                 birthday):
         try:
             self.__db.commit()
-            # print([email.replace("'", "''"), password.replace("'", "''"), first_name.replace("'", "''"), second_name.replace("'", "''"), last_name.replace("'", "''"), address.replace("'", "''"),
-            #                                                    phone.replace("'", "''"), med_doc.replace("'", "''"), sport_rank.replace("'", "''"), birthday.isoformat()])
-            # self.__cursor.callproc('WORK_PACK.REGISTERGUEST', [email.replace("'", "''"), password.replace("'", "''"), first_name.replace("'", "''"), second_name.replace("'", "''"), last_name.replace("'", "''"), address.replace("'", "''"),
-            #                                                    phone.replace("'", "''"), med_doc.replace("'", "''"), sport_rank.replace("'", "''"), birthday.isoformat()])
             self.__cursor.callproc('WORK_PACK.REGISTERGUEST', [email, password,
                                                                first_name,
                                                                second_name,
                                                                last_name, address,
                                                                phone, med_doc,
                                                                sport_rank, birthday.isoformat()])
-            # self.__cursor.callproc('WORK_PACK.REGISTERGUEST',
-            #                  ['yellowbox@example.com', '111111111', 'Vasyl', 'Ivanovich', 'Bondarenco', 'Koval', '38000',
-            #                   'images/1837647721/medDoc', 'Master', '25.10.1980'])
             self.__db.commit()
         except BaseException:
             flash('DB ERROR')
             pass
-
-        # there are no OUT parameters in Python, regular return here
-        # return user_id
-
-    # def get_employee_count(self, p_department_id):
-    #     l_count = self.__cursor.callfunc("PKG_HR.GET_EMPLOYEE_COUNT",
-    #                                      cx_Oracle.NUMBER, [p_department_id])
-    #     return l_count
-
-    # def find_employees(self, p_query):
-    #     # as it comes to all complex types we need to tell Oracle Client
-    #     # what type to expect from an OUT parameter
-    #     l_cur = self.__cursor.var(cx_Oracle.CURSOR)
-    #     l_query, l_emp = self.__cursor.callproc("PKG_HR.FIND_EMPLOYEES", [p_query, l_cur])
-    #     return list(l_emp)
 
 
 uc = UserCreation()
