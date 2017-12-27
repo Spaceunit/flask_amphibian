@@ -267,7 +267,7 @@ def profile():
         uc.__exit__()
         if user_role == 'None':
             return redirect('logout')
-        return render_template('profile.html', user_role=user_role, f_name=u_fsl(0), s_name=u_fsl(1), l_name=u_fsl(2))
+        return render_template('profile.html', user_role=user_role, f_name=u_fsl[0], s_name=u_fsl[1], l_name=u_fsl[2])
     else:
         return redirect(url_for('index'))
 
