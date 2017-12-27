@@ -274,7 +274,7 @@ def profile():
         return redirect(url_for('index'))
 
 
-@app.remuve_emp('/manage_emp')
+@app.manage_emp('/manage_emp')
 @is_logged_in
 def manage_emp():
     if 'logged_in' in session:
