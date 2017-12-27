@@ -274,7 +274,7 @@ def profile():
         return redirect(url_for('index'))
 
 
-@app.manage_emp('/manage_emp')
+@app.route('/manage_emp')
 @is_logged_in
 def manage_emp():
     if 'logged_in' in session:
@@ -284,6 +284,10 @@ def manage_emp():
             session['user_role'] = user_role
             uc.__exit__()
             return render_template('manage_emp.html')
+        else:
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
 
 
 
