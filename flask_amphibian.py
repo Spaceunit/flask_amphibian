@@ -9,7 +9,7 @@ from flask_session import Session
 from flask import render_template
 from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, validators
 from werkzeug.utils import secure_filename
 from passlib.hash import sha256_crypt
 from functools import wraps
@@ -197,6 +197,19 @@ class RegisterForm(Form):
     birthday = DateField('Birthday', [validators.DataRequired(min(time.localtime()))])
 
 
+class SearchStuffForm(Form):
+    email = StringField('Email', [validators.Length(min=1, max=254)])
+    first_name = StringField('First Name', [validators.Length(min=1, max=256)])
+    second_name = StringField('Second Name', [validators.Length(min=1, max=256)])
+    last_name = StringField('Last Name', [validators.Length(min=1, max=256)])
+    sport_rank = StringField('Sport Rank', [validators.Length(min=1, max=256)])
+    filter_switcher = RadioField(
+        'Choice?',
+        [validators.DataRequired()],
+        choices=[('choice1', 'Choice One'), ('choice2', 'Choice Two')], default='choice1'
+    )
+
+
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
     form = RegisterForm(request.form)
@@ -274,10 +287,19 @@ def profile():
         return redirect(url_for('index'))
 
 
-@app.route('/manage_emp')
+@app.route('/manage_emp', methods=['GET', 'POST'])
 @is_logged_in
 def manage_emp():
-    if 'logged_in' in session:
+    if 'logged_in' in session and request.method == 'GET':
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_emp.html')
+        else:
+            return redirect(url_for('index'))
+    elif 'logged_in' in session and request.method == 'POST':
         if session['user_role'] == 'Admin':
             uc.__enter__()
             user_role = uc.get_user_role(session['username'])
