@@ -312,6 +312,18 @@ def manage_emp():
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
             uc.__exit__()
+            email = form.email.data
+            first_name = form.first_name.data
+            second_name = form.second_name.data
+            last_name = form.last_name.data
+            sport_rank = form.sport_rank.data
+            filter_switcher = form.filter_switcher.data
+            flash(email)
+            flash(first_name)
+            flash(second_name)
+            flash(last_name)
+            flash(sport_rank)
+            flash(filter_switcher)
             return render_template('manage_emp.html', form=form)
         else:
             return redirect(url_for('index'))
