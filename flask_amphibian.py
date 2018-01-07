@@ -309,6 +309,16 @@ def manage_emp():
             return render_template('manage_emp.html', form=form)
         else:
             return redirect(url_for('index'))
+
+    elif 'logged_in' in session and request.method == 'POST' and not form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_emp.html', form=form)
+        else:
+            return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
