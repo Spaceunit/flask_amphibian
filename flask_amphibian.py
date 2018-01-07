@@ -81,6 +81,16 @@ class UserCreation:
         self.__cursor.close()
         self.__db.close()
 
+    def get_stuff_data(self, email, first_name, second_name, last_name, order):
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT * FROM TABLE(TASK_PAKAGE.FILTERSTUFF({0})) WHERE 
+                                     EMAIL='{1}' """.format(email, first_name, second_name, last_name, order))
+            stuff = self.__cursor.fetchall()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR')
+        return stuff
+
     def get_user_login_data(self, login_candidate, password_candidate):
         h_password = ' '
         try:
