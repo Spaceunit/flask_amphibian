@@ -198,15 +198,21 @@ class RegisterForm(Form):
 
 
 class SearchStuffForm(Form):
-    email = StringField('Email', [validators.Length(min=1, max=254)])
-    first_name = StringField('First Name', [validators.Length(min=1, max=256)])
-    second_name = StringField('Second Name', [validators.Length(min=1, max=256)])
-    last_name = StringField('Last Name', [validators.Length(min=1, max=256)])
-    sport_rank = StringField('Sport Rank', [validators.Length(min=1, max=256)])
+    email = StringField('Email', [validators.Length(max=254)])
+    first_name = StringField('First Name', [validators.Length(max=256)])
+    second_name = StringField('Second Name', [validators.Length(max=256)])
+    last_name = StringField('Last Name', [validators.Length(max=256)])
+    sport_rank = StringField('Sport Rank', [validators.Length(max=256)])
     filter_switcher = RadioField(
-        'Choice?',
+        'Order by',
         [validators.DataRequired()],
-        choices=[('choice1', 'Choice One'), ('choice2', 'Choice Two')], default='choice1'
+        choices=[
+                ('email', 'Email'),
+                ('first_name', 'First Name'),
+                ('second_name', 'Second Name'),
+                ('last_name', 'Last Name'),
+                ('sport_rank', 'Sport rank'),
+                ], default='email'
     )
 
 
