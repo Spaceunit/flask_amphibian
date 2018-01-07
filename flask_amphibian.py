@@ -290,27 +290,27 @@ def profile():
 @app.route('/manage_emp', methods=['GET', 'POST'])
 @is_logged_in
 def manage_emp():
+    form = SearchStuffForm(request.form)
     if 'logged_in' in session and request.method == 'GET':
         if session['user_role'] == 'Admin':
             uc.__enter__()
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
             uc.__exit__()
-            return render_template('manage_emp.html')
+            return render_template('manage_emp.html', form=form)
         else:
             return redirect(url_for('index'))
-    elif 'logged_in' in session and request.method == 'POST':
+    elif 'logged_in' in session and request.method == 'POST' and form.validate():
         if session['user_role'] == 'Admin':
             uc.__enter__()
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
             uc.__exit__()
-            return render_template('manage_emp.html')
+            return render_template('manage_emp.html', form=form)
         else:
             return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
-
 
 
 @app.route('/logout')
