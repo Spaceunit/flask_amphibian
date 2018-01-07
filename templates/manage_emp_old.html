@@ -31,30 +31,56 @@
           <p>Sort by</p>
         </div>
       </div>
+
+    <form method="POST">
     <div class="row">
-    {% from "includes/_formhelpers.html" import render_field %}
-        <form method="POST" action="">
-            <div class="form-group">
-                {{ render_field(form.email, class_="form-control", type_="email") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.first_name, class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.second_name, class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.last_name, class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.sport_rank, class_="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.filter_switcher, class_="form-control") }}
-            </div>
-            <p><input type="submit" class="btn btn-primary" value="Submit"> <input class="btn btn-danger" type="reset" value="Reset"></p>
-        </form>
+        {% from "includes/_formhelpers.html" import render_field %}
+        <div class="col-md-4 input-group">
+            <span class="input-group-addon">
+                <!-- <input checked name="group1" id="radio_1" type="radio" value="choice1"/> -->
+                {{ render_field(form.filter_switcher, class_="form-control", type_="radio", value_="choice1") }}
+            </span>
+            <input class="form-control" type="text" placeholder="Search by Email">
+        </div>
     </div>
+    <div class="row">
+        <div class="col-md-4 input-group">
+            <span class="input-group-addon">
+                <input name="group1" id="radio_2" type="radio" value="choice2"/>
+            </span>
+            <input class="form-control" type="text" placeholder="Search by First Name">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 input-group">
+            <span class="input-group-addon">
+                <input name="group1" id="radio_3" type="radio" value="choice3"/>
+            </span>
+            <input class="form-control" type="text" placeholder="Search by Second Name">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 input-group">
+            <span class="input-group-addon">
+                <input name="group1" id="radio_4" type="radio" value="choice4"/>
+            </span>
+            <input class="form-control" type="text" placeholder="Search by Last Name">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 input-group">
+            <span class="input-group-addon">
+                <input name="group1" id="radio_5" type="radio" value="choice5"/>
+            </span>
+            <input class="form-control" type="text" placeholder="Search by Sport Rank">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </div>
+    </form>
     <div class="row">
         <div class="col-md-12">
             <table class="table table-striped">
