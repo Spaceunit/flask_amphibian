@@ -86,21 +86,21 @@ class UserCreation:
         stuff = []
         try:
             app.logger.info("SQL IS\n" + """SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email => '%{0}%',
-                                                                        role_name => '%{1}%',
-                                                                        first_name => '%{2}%',
-                                                                        second_name =>'%{3}%',
-                                                                        last_name => '%{4}%',
-                                                                        sport_rank => '%{5}%')) ORDER BY 
+                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email_f => '%{0}%',
+                                                                        role_name_f => '%{1}%',
+                                                                        first_name_f => '%{2}%',
+                                                                        second_name_f =>'%{3}%',
+                                                                        last_name_f => '%{4}%',
+                                                                        sport_rank_f => '%{5}%')) ORDER BY 
                                      {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
                                                    order.upper()))
             self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email => '%{0}%',
-                                                                        role_name => '%{1}%',
-                                                                        first_name => '%{2}%',
-                                                                        second_name =>'%{3}%',
-                                                                        last_name => '%{4}%',
-                                                                        sport_rank => '%{5}%')) ORDER BY 
+                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email_f => '%{0}%',
+                                                                        role_name_f => '%{1}%',
+                                                                        first_name_f => '%{2}%',
+                                                                        second_name_f =>'%{3}%',
+                                                                        last_name_f => '%{4}%',
+                                                                        sport_rank_f => '%{5}%')) ORDER BY 
                                      {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
                                                    order.upper()))
             stuff = self.__cursor.fetchall()
