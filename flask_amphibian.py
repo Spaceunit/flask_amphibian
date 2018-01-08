@@ -81,14 +81,17 @@ class UserCreation:
         self.__cursor.close()
         self.__db.close()
 
-    def get_stuff_data(self, email, first_name, second_name, last_name, order):
+    def get_stuff_data(self, email: str, role_name: str, first_name: str, second_name: str, last_name: str,
+                       sport_rank: str, order='email') -> list:
         stuff = []
         try:
-            self.__cursor.execute("""SELECT * FROM TABLE(TASK_PAKAGE.FILTERSTUFF({0})) WHERE 
-                                     EMAIL='{1}' """.format(email, first_name, second_name, last_name, order))
+            self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
+                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF({0}, {1}, {2}, {3}, {4}, {5}})) ORDER BY
+                                     {6} """.format(email, role_name, first_name, second_name, last_name, sport_rank,
+                                                    order.upper()))
             stuff = self.__cursor.fetchall()
         except cx_Oracle.DatabaseError:
-            flash('ERROR')
+            flash('ERROR', 'danger')
         return stuff
 
     def get_user_login_data(self, login_candidate, password_candidate):
@@ -323,22 +326,17 @@ def manage_emp():
             uc.__enter__()
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
-            uc.__exit__()
             email = form.email.data
             role_name = form.role_name.data
             first_name = form.first_name.data
             second_name = form.second_name.data
             last_name = form.last_name.data
             sport_rank = form.sport_rank.data
-            filter_switcher = form.filter_switcher.data
-            flash(email)
-            flash(role_name)
-            flash(first_name)
-            flash(second_name)
-            flash(last_name)
-            flash(sport_rank)
-            flash(filter_switcher)
-            return render_template('manage_emp.html', form=form)
+            order = form.filter_switcher.data
+            stuff_list = uc.get_stuff_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            uc.__exit__()
+
+            return render_template('manage_emp.html', form=form, stuff=stuff_list)
         else:
             return redirect(url_for('index'))
 

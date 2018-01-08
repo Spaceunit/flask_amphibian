@@ -72,33 +72,25 @@
                 <thead>
                     <tr>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>First name</th>
                         <th>Second name</th>
                         <th>Last name</th>
                         <th>Sport rank</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
+                {% for coworker in stuff %}
                     <tr>
-                        <td>Email_1</td>
-                        <td>First_name_1</td>
-                        <td>Second_name_1</td>
-                        <td>Last_name_1</td>
-                        <td>SportRank</td>
-                    </tr>
-                    <tr>
-                        <td>Email_2</td>
-                        <td>Firts_name_2</td>
-                        <td>Second_name_2</td>
-                        <td>Last_name_2</td>
-                        <td>SportRank</td>
-                    </tr>
-                    <tr>
-                        <td>Email_3</td>
-                        <td>First_name_3</td>
-                        <td>Second_name_3</td>
-                        <td>Last_name_3</td>
-                        <td>SportRank</td>
+                        <td>{{ coworker[0] }}</td>
+                        <td>{{ coworker[1] }}</td>
+                        <td>{{ coworker[2] }}</td>
+                        <td>{{ coworker[3] }}</td>
+                        <td>{{ coworker[5] }}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
