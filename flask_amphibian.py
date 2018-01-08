@@ -370,6 +370,30 @@ def manage_emp():
         return redirect(url_for('index'))
 
 
+@app.route('/manage_emp/edit', methods=['GET', 'POST'])
+@is_logged_in
+def edit_emp(user_email):
+    form = RegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+
+        email = form.email.data
+        password = sha256_crypt.encrypt(str(form.password.data))
+        confirm_password = form.confirm_password.data
+        first_name = form.first_name.data
+        second_name = form.second_name.data
+        last_name = form.last_name.data
+        address = form.address.data
+        phone = form.phone.data
+        sport_rank = form.sport_rank.data
+        birthday = form.birthday.data
+        uc.__enter__()
+        uc.add_user(email, password, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty', sport_rank, birthday)
+        uc.__exit__()
+        flash('You are now registered and can log in', 'success')
+        return render_template('registration.html', form=form)
+    return render_template('registration.html', form=form)
+
+
 @app.route('/logout')
 def logout():
     session.clear()
