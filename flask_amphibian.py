@@ -86,7 +86,7 @@ class UserCreation:
         stuff = []
         try:
             self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF({0}, {1}, {2}, {3}, {4}, {5}})) ORDER BY 
+                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')) ORDER BY 
                                      {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
                                                    order.upper()))
             stuff = self.__cursor.fetchall()
