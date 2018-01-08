@@ -335,7 +335,7 @@ def manage_emp():
             order = form.filter_switcher.data
             stuff_list = uc.get_stuff_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
             uc.__exit__()
-
+            app.logger.info(stuff_list)
             return render_template('manage_emp.html', form=form, stuff=stuff_list)
         else:
             return redirect(url_for('index'))
