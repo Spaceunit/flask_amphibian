@@ -209,6 +209,7 @@ class RegisterForm(Form):
 
 class SearchStuffForm(Form):
     email = StringField('Email', [validators.Length(max=254)])
+    role_name = StringField('Role Name', [validators.Length(max=254)])
     first_name = StringField('First Name', [validators.Length(max=256)])
     second_name = StringField('Second Name', [validators.Length(max=256)])
     last_name = StringField('Last Name', [validators.Length(max=256)])
@@ -218,6 +219,7 @@ class SearchStuffForm(Form):
         [validators.DataRequired()],
         choices=[
                 ('email', 'Email'),
+                ('role_name', 'Role Name'),
                 ('first_name', 'First Name'),
                 ('second_name', 'Second Name'),
                 ('last_name', 'Last Name'),
@@ -323,12 +325,14 @@ def manage_emp():
             session['user_role'] = user_role
             uc.__exit__()
             email = form.email.data
+            role_name = form.role_name.data
             first_name = form.first_name.data
             second_name = form.second_name.data
             last_name = form.last_name.data
             sport_rank = form.sport_rank.data
             filter_switcher = form.filter_switcher.data
             flash(email)
+            flash(role_name)
             flash(first_name)
             flash(second_name)
             flash(last_name)
