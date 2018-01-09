@@ -410,11 +410,11 @@ def manage_emp():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_emp', methods=['GET', 'POST'])
+@app.route('/edit_emp/<string:user_email>', methods=['GET', 'POST'])
 @is_logged_in
-def edit_emp():
+def edit_emp(user_email):
     form = EditEmpForm(request.form)
-    user_email = request.args['user_email']
+    # user_email = request.args['user_email']
     uc.__enter__()
     user_data = uc.get_emp(user_email)
     uc.__exit__()
