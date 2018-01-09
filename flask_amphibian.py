@@ -439,7 +439,7 @@ def edit_emp(user_email):
         sport_rank = request.form['sport_rank']
         birthday = request.form['birthday']
         uc.__enter__()
-        flash(birthday)
+        # flash(birthday)
         # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
         #                sport_rank, birthday)
         uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
