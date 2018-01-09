@@ -475,8 +475,6 @@ COMMIT;
 /*==============================================================*/
 /* PROCEDURES                                               */
 /*==============================================================*/
-
--- CREATE OR REPLACE PROCEDURE registerGuest(user_row in "User"%)
 create or replace PACKAGE WORK_PACK IS
 	TYPE is_regUser IS RECORD (
 user_id                 INTEGER,
@@ -489,16 +487,16 @@ user_id                 INTEGER,
    phone_number         VARCHAR2(15),
    med_doc              VARCHAR2(2048),
    sport_rank           VARCHAR2(256),
-   password             VARCHAR2(256)        
+   password             VARCHAR2(256)
 );
-TYPE TEAMFILTERED IS RECORD 
+TYPE TEAMFILTERED IS RECORD
 (
   coach_id_fk INTEGER,
   member_id_fk INTEGER,
   team_name VARCHAR2(256)
 );
 TYPE F_TEAM IS TABLE OF TEAMFILTERED;
-TYPE COWORKERFILTERED IS RECORD 
+TYPE COWORKERFILTERED IS RECORD
 (
   email VARCHAR2(256),
   role_name VARCHAR2(256),
@@ -507,7 +505,21 @@ TYPE COWORKERFILTERED IS RECORD
   last_name VARCHAR2(256),
   sport_rank VARCHAR2(256)
 );
+TYPE COWORKERSELECTED IS RECORD
+(
+  email VARCHAR2(256),
+  role_name VARCHAR2(256),
+  first_name VARCHAR2(256),
+  second_name VARCHAR2(256),
+  last_name VARCHAR2(256),
+  address VARCHAR2(256),
+  phone_number VARCHAR2(15),
+  sport_rank VARCHAR2(256),
+  birthday DATE,
+  med_doc VARCHAR(2048)
+);
 TYPE F_COWORKER IS TABLE OF COWORKERFILTERED;
+TYPE S_COWORKER IS TABLE OF COWORKERSELECTED;
 FUNCTION FILTERSTUFF(
   email_f in VARCHAR2 DEFAULT '%%',
   role_name_f in VARCHAR2 DEFAULT '%%',
@@ -516,6 +528,31 @@ FUNCTION FILTERSTUFF(
   last_name_f in VARCHAR2 DEFAULT '%%',
   sport_rank_f in VARCHAR2 DEFAULT '%%'
 ) RETURN F_COWORKER PIPELINED;
+FUNCTION FILTERCLIENT(
+  email_f in VARCHAR2 DEFAULT '%%',
+  role_name_f in VARCHAR2 DEFAULT '%%',
+  first_name_f in VARCHAR2 DEFAULT '%%',
+  second_name_f in VARCHAR2 DEFAULT '%%',
+  last_name_f in VARCHAR2 DEFAULT '%%',
+  sport_rank_f in VARCHAR2 DEFAULT '%%'
+) RETURN F_COWORKER PIPELINED;
+FUNCTION FILTERGUEST(
+  email_f in VARCHAR2 DEFAULT '%%',
+  role_name_f in VARCHAR2 DEFAULT '%%',
+  first_name_f in VARCHAR2 DEFAULT '%%',
+  second_name_f in VARCHAR2 DEFAULT '%%',
+  last_name_f in VARCHAR2 DEFAULT '%%',
+  sport_rank_f in VARCHAR2 DEFAULT '%%'
+) RETURN F_COWORKER PIPELINED;
+FUNCTION GETEMP(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED;
+FUNCTION GETCLIENT(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED;
+FUNCTION GETGUEST(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED;
 FUNCTION FILTERTEAM(TEAMNAME in VARCHAR2) RETURN f_team PIPELINED;
 	FUNCTION GETUSERLOGINDATA(user_email in "User".email%TYPE) RETURN VARCHAR2;
 	FUNCTION GETUSERROLE(user_email in "User".email%TYPE) RETURN VARCHAR2;
@@ -531,7 +568,21 @@ FUNCTION FILTERTEAM(TEAMNAME in VARCHAR2) RETURN f_team PIPELINED;
 	,sport_rank in "User".sport_rank%TYPE
 	,birthday in VARCHAR2);
 
+    PROCEDURE updateEmp(
+	email in "User".email%TYPE
+    ,new_role_name in "User".role_name_fk%TYPE
+	,first_name in "User".first_name%TYPE
+	,second_name in "User".second_name%TYPE
+	,last_name in "User".last_name%TYPE
+	,user_address in "User".user_address%TYPE
+	,phone_number in "User".phone_number%TYPE
+	,med_doc in "User".med_doc%TYPE
+	,sport_rank in "User".sport_rank%TYPE
+	,birthday in VARCHAR2);
+
 	PROCEDURE registerUser(register_row in is_regUser,
+		role_name in "User".role_name_fk%TYPE);
+    PROCEDURE updateUser(register_row in is_regUser,
 		role_name in "User".role_name_fk%TYPE);
 	PROCEDURE copyFromRecord(register_row in is_regUser,
 		USER_ROW out "User"%ROWTYPE);
@@ -606,6 +657,35 @@ register_row.sport_rank := sport_rank;
 registerUser(register_row, role_name);
 END registerGuest;
 
+PROCEDURE updateEmp(
+	email in "User".email%TYPE
+    ,new_role_name in "User".role_name_fk%TYPE
+	,first_name in "User".first_name%TYPE
+	,second_name in "User".second_name%TYPE
+	,last_name in "User".last_name%TYPE
+	,user_address in "User".user_address%TYPE
+	,phone_number in "User".phone_number%TYPE
+	,med_doc in "User".med_doc%TYPE
+	,sport_rank in "User".sport_rank%TYPE
+	,birthday in VARCHAR2)
+IS
+--new_role_name "User".role_name_fk%TYPE := 'Guest';
+register_row is_regUser;
+BEGIN
+register_row.email := email;
+register_row.first_name := first_name;
+register_row.second_name := second_name;
+register_row.last_name := last_name;
+--register_row.birthday := birthday;
+SELECT TO_DATE(birthday, 'YYYY-MM-DD') INTO register_row.birthday FROM DUAL;
+register_row.user_address := user_address;
+register_row.phone_number := phone_number;
+register_row.med_doc := med_doc;
+--register_row.password := password;
+register_row.sport_rank := sport_rank;
+updateUser(register_row, new_role_name);
+END updateEmp;
+
 PROCEDURE registerUser(register_row in is_regUser,
 		role_name in "User".role_name_fk%TYPE)
 IS
@@ -615,6 +695,17 @@ copyFromRecord(register_row, USER_ROW);
 USER_ROW.role_name_fk := role_name;
 createUser(USER_ROW);
 END registerUser;
+
+PROCEDURE updateUser(register_row in is_regUser,
+		role_name in "User".role_name_fk%TYPE)
+IS
+USER_ROW "User"%ROWTYPE;
+BEGIN
+copyFromRecord(register_row, USER_ROW);
+USER_ROW.role_name_fk := role_name;
+USER_ROW.password := NULL;
+createUser(USER_ROW);
+END updateUser;
 
 PROCEDURE copyFromRecord(register_row in is_regUser,
 	USER_ROW out "User"%ROWTYPE)
@@ -644,8 +735,32 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT SYSDATE INTO curdate FROM DUAL;
 newuser := user_row;
 newuser.reg_day := curdate;
-SELECT USER_ID INTO c_user_id FROM "User" WHERE "User".email = user_row.email; 
-UPDATE "User" SET DELETED = 1 WHERE USER_ID = c_user_id;
+SELECT USER_ID INTO c_user_id FROM "User" WHERE "User".email = user_row.email;
+IF user_row.password IS NOT NULL THEN
+UPDATE "User" SET FIRST_NAME = user_row.first_name,
+                  SECOND_NAME = user_row.second_name,
+                  LAST_NAME = user_row.last_name,
+                  BIRTHDAY = user_row.birthday,
+                  USER_ADDRESS = user_row.user_address,
+                  PHONE_NUMBER = user_row.phone_number,
+                  MED_DOC = user_row.med_doc,
+                  SPORT_RANK = user_row.sport_rank,
+                  PASSWORD = user_row.password,
+                  DELETED = 1
+WHERE USER_ID = c_user_id;
+ELSE
+UPDATE "User" SET FIRST_NAME = user_row.first_name,
+                  SECOND_NAME = user_row.second_name,
+                  LAST_NAME = user_row.last_name,
+                  BIRTHDAY = user_row.birthday,
+                  USER_ADDRESS = user_row.user_address,
+                  PHONE_NUMBER = user_row.phone_number,
+                  MED_DOC = user_row.med_doc,
+                  SPORT_RANK = user_row.sport_rank,
+                  ROLE_NAME_FK = user_row.role_name_fk,
+                  DELETED = 1
+WHERE USER_ID = c_user_id;
+END IF;
 COMMIT;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
@@ -685,12 +800,12 @@ PROCEDURE createTariffPlan(client_email in "Client".email%TYPE
 , c_tariff in Tariff.tariff_name%TYPE)
 IS
 client_id "User".user_id%TYPE;
-curdate Tariff_plan.PAY_DATE%TYPE; 
+curdate Tariff_plan.PAY_DATE%TYPE;
 BEGIN
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT USER_ID INTO client_id FROM "User" WHERE ROLE_NAME_FK = 'Client' AND
 DELETED <> 0 AND EMAIL = client_email;
-SELECT SYSDATE INTO curdate FROM DUAL; 
+SELECT SYSDATE INTO curdate FROM DUAL;
 INSERT INTO TARIFF_PLAN (TARIFF_NAME_FK, USER_ID_FK, PAY_DATE) VALUES (
 c_tariff, client_id, curdate);
 COMMIT;
@@ -711,12 +826,12 @@ PROCEDURE createTeam(client_email in "Client".email%TYPE
 , c_tariff in Tariff.tariff_name%TYPE)
 IS
 client_id "User".user_id%TYPE;
-curdate Tariff_plan.PAY_DATE%TYPE; 
+curdate Tariff_plan.PAY_DATE%TYPE;
 BEGIN
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT USER_ID INTO client_id FROM "User" WHERE ROLE_NAME_FK = 'Client' AND
 DELETED <> 0 AND EMAIL = client_email;
-SELECT SYSDATE INTO curdate FROM DUAL; 
+SELECT SYSDATE INTO curdate FROM DUAL;
 INSERT INTO TARIFF_PLAN (TARIFF_NAME_FK, USER_ID_FK, PAY_DATE) VALUES (
 c_tariff, client_id, curdate);
 COMMIT;
@@ -748,6 +863,122 @@ BEGIN
     PIPE ROW(item);
     end loop;
 END FILTERSTUFF;
+
+FUNCTION FILTERCLIENT(
+  email_f in VARCHAR2 DEFAULT '%%',
+  role_name_f in VARCHAR2 DEFAULT '%%',
+  first_name_f in VARCHAR2 DEFAULT '%%',
+  second_name_f in VARCHAR2 DEFAULT '%%',
+  last_name_f in VARCHAR2 DEFAULT '%%',
+  sport_rank_f in VARCHAR2 DEFAULT '%%'
+) RETURN F_COWORKER PIPELINED AS
+CURSOR data IS SELECT "Client".EMAIL,
+                      "Client".ROLE_NAME_FK,
+                      "Client".FIRST_NAME,
+                      "Client".SECOND_NAME,
+                      "Client".LAST_NAME,
+                      "Client".SPORT_RANK
+from "Client" WHERE    LOWER("Client".ROLE_NAME_FK)   LIKE LOWER(role_name_f) AND
+                      LOWER("Client".EMAIL)       LIKE LOWER(email_f) AND
+                      LOWER("Client".FIRST_NAME)  LIKE LOWER(first_name_f) AND
+                      LOWER("Client".SECOND_NAME) LIKE LOWER(second_name_f) AND
+                      LOWER("Client".LAST_NAME)   LIKE LOWER(last_name_f) AND
+                      LOWER("Client".SPORT_RANK)  LIKE LOWER(sport_rank_f);
+BEGIN
+    for item in data
+    loop
+    PIPE ROW(item);
+    end loop;
+END FILTERCLIENT;
+
+FUNCTION FILTERGUEST(
+  email_f in VARCHAR2 DEFAULT '%%',
+  role_name_f in VARCHAR2 DEFAULT '%%',
+  first_name_f in VARCHAR2 DEFAULT '%%',
+  second_name_f in VARCHAR2 DEFAULT '%%',
+  last_name_f in VARCHAR2 DEFAULT '%%',
+  sport_rank_f in VARCHAR2 DEFAULT '%%'
+) RETURN F_COWORKER PIPELINED AS
+CURSOR data IS SELECT "Guest".EMAIL,
+                      "Guest".ROLE_NAME_FK,
+                      "Guest".FIRST_NAME,
+                      "Guest".SECOND_NAME,
+                      "Guest".LAST_NAME,
+                      "Guest".SPORT_RANK
+from "Guest" WHERE    LOWER("Guest".ROLE_NAME_FK)   LIKE LOWER(role_name_f) AND
+                      LOWER("Guest".EMAIL)       LIKE LOWER(email_f) AND
+                      LOWER("Guest".FIRST_NAME)  LIKE LOWER(first_name_f) AND
+                      LOWER("Guest".SECOND_NAME) LIKE LOWER(second_name_f) AND
+                      LOWER("Guest".LAST_NAME)   LIKE LOWER(last_name_f) AND
+                      LOWER("Guest".SPORT_RANK)  LIKE LOWER(sport_rank_f);
+BEGIN
+    for item in data
+    loop
+    PIPE ROW(item);
+    end loop;
+END FILTERGUEST;
+
+FUNCTION GETEMP(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED AS
+CURSOR data IS SELECT "Stuff".EMAIL,
+                      "Stuff".ROLE_NAME,
+                      "Stuff".FIRST_NAME,
+                      "Stuff".SECOND_NAME,
+                      "Stuff".LAST_NAME,
+                      "Stuff".ADDRESS,
+                      "Stuff".PHONE_NUMBER,
+                      "Stuff".SPORT_RANK,
+                      "Stuff".BIRTHDAY,
+                      "Stuff".MED_DOC
+from "Stuff" WHERE    "Stuff".EMAIL = email_f;
+BEGIN
+    for item in data
+    loop
+    PIPE ROW(item);
+    end loop;
+END GETEMP;
+
+FUNCTION GETCLIENT(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED AS
+CURSOR data IS SELECT "Client".EMAIL,
+                      "Client".ROLE_NAME_FK,
+                      "Client".FIRST_NAME,
+                      "Client".SECOND_NAME,
+                      "Client".LAST_NAME,
+                      "Client".ADDRESS,
+                      "Client".PHONE_NUMBER,
+                      "Client".SPORT_RANK,
+                      "Client".BIRTHDAY,
+                      "Client".MED_DOC
+from "Client" WHERE    "Client".EMAIL = email_f;
+BEGIN
+    for item in data
+    loop
+    PIPE ROW(item);
+    end loop;
+END GETCLIENT;
+FUNCTION GETGUEST(
+  email_f in VARCHAR2
+) RETURN S_COWORKER PIPELINED AS
+CURSOR data IS SELECT "Guest".EMAIL,
+                      "Guest".ROLE_NAME_FK,
+                      "Guest".FIRST_NAME,
+                      "Guest".SECOND_NAME,
+                      "Guest".LAST_NAME,
+                      "Guest".ADDRESS,
+                      "Guest".PHONE_NUMBER,
+                      "Guest".SPORT_RANK,
+                      "Guest".BIRTHDAY,
+                      "Guest".MED_DOC
+from "Guest" WHERE    "Guest".EMAIL = email_f;
+BEGIN
+    for item in data
+    loop
+    PIPE ROW(item);
+    end loop;
+END GETGUEST;
 END WORK_PACK;
 /
 /*==============================================================*/

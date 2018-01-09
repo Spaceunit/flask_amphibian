@@ -160,7 +160,25 @@ class UserCreation:
     def get_emp(self, email: str) -> tuple:
         stuff = []
         try:
-            self.__cursor.execute("""SELECT * FROM TABLE(WORK_PACK.GETUSER('{0}'))""".format(email))
+            self.__cursor.execute("""SELECT * FROM TABLE(WORK_PACK.GETEMP('{0}'))""".format(email))
+            stuff = self.__cursor.fetchone()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
+
+    def get_client(self, email: str) -> tuple:
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT * FROM TABLE(WORK_PACK.GETCLIENT('{0}'))""".format(email))
+            stuff = self.__cursor.fetchone()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
+
+    def get_guest(self, email: str) -> tuple:
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT * FROM TABLE(WORK_PACK.GETGUEST('{0}'))""".format(email))
             stuff = self.__cursor.fetchone()
         except cx_Oracle.DatabaseError:
             flash('ERROR', 'danger')
@@ -527,6 +545,91 @@ def edit_emp(user_email):
         return redirect(url_for('edit_emp', user_email=email))
     return render_template('edit_emp.html', form=form)
 
+
+@app.route('/edit_client?<string:user_email>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_client(user_email):
+    form = EditEmpForm(request.form)
+    # user_email = request.args['user_email']
+    uc.__enter__()
+    user_data = uc.get_client(user_email)
+    app.logger.info(user_email)
+    app.logger.info(user_data)
+    uc.__exit__()
+    form.email.data = user_data[0]
+    form.role_name.data = user_data[1]
+    form.first_name.data = user_data[2]
+    form.second_name.data = user_data[3]
+    form.last_name.data = user_data[4]
+    form.address.data = user_data[5]
+    form.phone.data = user_data[6]
+    form.sport_rank.data = user_data[7]
+    form.birthday.data = user_data[8]
+
+    if request.method == 'POST' and form.validate():
+        email = request.form['email']
+        role_name = request.form['role_name']
+        first_name = request.form['first_name']
+        second_name = request.form['second_name']
+        last_name = request.form['last_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        sport_rank = request.form['sport_rank']
+        birthday = request.form['birthday']
+        uc.__enter__()
+        # flash(birthday)
+        # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
+        #                sport_rank, birthday)
+        uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
+                       address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
+                       birthday=birthday)
+        uc.__exit__()
+        flash('User is updated', 'success')
+        return redirect(url_for('edit_client', user_email=email))
+    return render_template('edit_emp.html', form=form)
+
+
+@app.route('/edit_guest?<string:user_email>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_guest(user_email):
+    form = EditEmpForm(request.form)
+    # user_email = request.args['user_email']
+    uc.__enter__()
+    user_data = uc.get_guest(user_email)
+    app.logger.info(user_email)
+    app.logger.info(user_data)
+    uc.__exit__()
+    form.email.data = user_data[0]
+    form.role_name.data = user_data[1]
+    form.first_name.data = user_data[2]
+    form.second_name.data = user_data[3]
+    form.last_name.data = user_data[4]
+    form.address.data = user_data[5]
+    form.phone.data = user_data[6]
+    form.sport_rank.data = user_data[7]
+    form.birthday.data = user_data[8]
+
+    if request.method == 'POST' and form.validate():
+        email = request.form['email']
+        role_name = request.form['role_name']
+        first_name = request.form['first_name']
+        second_name = request.form['second_name']
+        last_name = request.form['last_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        sport_rank = request.form['sport_rank']
+        birthday = request.form['birthday']
+        uc.__enter__()
+        # flash(birthday)
+        # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
+        #                sport_rank, birthday)
+        uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
+                       address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
+                       birthday=birthday)
+        uc.__exit__()
+        flash('User is updated', 'success')
+        return redirect(url_for('edit_guest', user_email=email))
+    return render_template('edit_emp.html', form=form)
 
 @app.route('/logout')
 def logout():
