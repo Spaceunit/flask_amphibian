@@ -414,21 +414,20 @@ def manage_emp():
 @is_logged_in
 def edit_emp():
     form = EditEmpForm(request.form)
-    if request.method == 'POST' and 'user_email' in request.args:
-        user_email = request.args['user_email']
-        uc.__enter__()
-        user_data = uc.get_emp(user_email)
-        uc.__exit__()
-        form.email.data = user_data[0]
-        form.role_name.data = user_data[1]
-        form.first_name.data = user_data[2]
-        form.second_name.data = user_data[3]
-        form.last_name.data = user_data[4]
-        form.address.data = user_data[5]
-        form.phone.data = user_data[6]
-        form.sport_rank.data = user_data[7]
-        form.birthday.data = user_data[8]
-        return render_template('edit_emp.html', form=form)
+    user_email = request.args['user_email']
+    uc.__enter__()
+    user_data = uc.get_emp(user_email)
+    uc.__exit__()
+    form.email.data = user_data[0]
+    form.role_name.data = user_data[1]
+    form.first_name.data = user_data[2]
+    form.second_name.data = user_data[3]
+    form.last_name.data = user_data[4]
+    form.address.data = user_data[5]
+    form.phone.data = user_data[6]
+    form.sport_rank.data = user_data[7]
+    form.birthday.data = user_data[8]
+
     if request.method == 'POST' and form.validate() and 'user_email' not in request.args:
         email = form.email.data
         role_name = form.role_name.data
