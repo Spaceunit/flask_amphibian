@@ -250,7 +250,16 @@ class RegisterForm(Form):
 
 class EditEmpForm(Form):
     email = StringField('Email', [validators.Length(min=1, max=254)])
-    role_name = StringField('Role Name', [validators.Length(min=1, max=256)])
+    role_name = RadioField(
+        'Order by',
+        [validators.DataRequired()],
+        choices=[
+                ('Admin', 'Адміністратор'),
+                ('Coach', 'Тренер'),
+                ('Client', 'Клієнт'),
+                ('Guest', 'Гість'),
+                ]
+    )
     first_name = StringField('First Name', [validators.Length(min=1, max=256)])
     second_name = StringField('Second Name', [validators.Length(min=1, max=256)])
     last_name = StringField('Last Name', [validators.Length(min=1, max=256)])
