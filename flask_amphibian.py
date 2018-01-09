@@ -442,7 +442,7 @@ def edit_emp(user_email):
         flash(birthday)
         # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
         #                sport_rank, birthday)
-        uc.update_user(email=email, role_name=role_name, second_name=second_name, last_name=last_name,
+        uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
                        address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
                        birthday=birthday)
         uc.__exit__()
