@@ -126,6 +126,24 @@ class UserCreation:
             flash('ERROR', 'danger')
         return stuff
 
+    def get_guest_data(self, email: str, role_name: str, first_name: str, second_name: str, last_name: str,
+                        sport_rank: str, order='email') -> list:
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
+                                     FROM TABLE(WORK_PACK.FILTERGUEST(email_f => '%{0}%',
+                                                                        role_name_f => '%{1}%',
+                                                                        first_name_f => '%{2}%',
+                                                                        second_name_f =>'%{3}%',
+                                                                        last_name_f => '%{4}%',
+                                                                        sport_rank_f => '%{5}%')) ORDER BY 
+                                     {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
+                                                   order.upper()))
+            stuff = self.__cursor.fetchall()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
+
     def get_user_login_data(self, login_candidate, password_candidate):
         h_password = ' '
         try:
@@ -530,7 +548,7 @@ def manage_guest():
             order = form.filter_switcher.data
             app.logger.info('INPUT DATA IS')
             app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
-            stuff_list = uc.get_client_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            stuff_list = uc.get_guest(email, role_name, first_name, second_name, last_name, sport_rank, order)
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
             app.logger.info(stuff_list)
