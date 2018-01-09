@@ -548,7 +548,7 @@ def manage_guest():
             order = form.filter_switcher.data
             app.logger.info('INPUT DATA IS')
             app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
-            stuff_list = uc.get_guest(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            stuff_list = uc.get_guest_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
             app.logger.info(stuff_list)
