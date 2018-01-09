@@ -172,7 +172,7 @@ class UserCreation:
                                                             second_name,
                                                             last_name, address,
                                                             phone, med_doc,
-                                                            sport_rank, birthday.isoformat()])
+                                                            sport_rank, birthday])
             self.__db.commit()
         except cx_Oracle.DatabaseError:
             flash('DB ERROR')
@@ -439,8 +439,12 @@ def edit_emp(user_email):
         sport_rank = request.form['sport_rank']
         birthday = request.form['birthday']
         uc.__enter__()
+        flash(birthday)
         uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
                        sport_rank, birthday)
+        uc.update_user(email=email, role_name=role_name, second_name=second_name, last_name=last_name,
+                       address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
+                       birthday=birthday)
         uc.__exit__()
         flash('User is updated', 'success')
         return render_template('edit_emp.html', form=form)
