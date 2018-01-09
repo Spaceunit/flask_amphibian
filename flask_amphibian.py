@@ -429,15 +429,15 @@ def edit_emp():
     form.birthday.data = user_data[8]
 
     if request.method == 'POST' and form.validate():
-        email = form.email.data
-        role_name = form.role_name.data
-        first_name = form.first_name.data
-        second_name = form.second_name.data
-        last_name = form.last_name.data
-        address = form.address.data
-        phone = form.phone.data
-        sport_rank = form.sport_rank.data
-        birthday = form.birthday.data
+        email = request.form['email']
+        role_name = request.form['role_name']
+        first_name = request.form['first_name']
+        second_name = request.form['second_name']
+        last_name = request.form['last_name']
+        address = request.form['address']
+        phone = request.form['phone']
+        sport_rank = request.form['sport_rank']
+        birthday = request.form['birthday']
         uc.__enter__()
         uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
                        sport_rank, birthday)
