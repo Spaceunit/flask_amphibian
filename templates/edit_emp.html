@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Редагування користувача</h2>
+          <p>Сторінка редагування користувача<br>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris
+              condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod.
+              Donec sed odio dui. </p>
+        </div>
+      </div>
+    <div class="row">
+        {% from "includes/_formhelpers.html" import render_field %}
+        <form method="POST" action="">
+            <div class="form-group">
+                {{ render_field(form.email, class_="form-control", type_="email") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.role_name, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.first_name, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.second_name, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.last_name, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.address, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.phone, class_="form-control bfh-phone") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.sport_rank, class_="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ render_field(form.birthday, class_="form-control", type="date") }}
+            </div>
+            <p><input type="submit" class="btn btn-primary" value="Submit"> <input class="btn btn-danger" type="reset" value="Reset"></p>
+        </form>
+    </div>
+{% endblock %}

@@ -130,7 +130,7 @@ class UserCreation:
         return user_role
 
     def get_user_fsl_name(self, login_candidate, role):
-        user_fsl = ()
+        user_fsl = []
         try:
             self.__cursor.execute("""SELECT FIRST_NAME, SECOND_NAME, LAST_NAME FROM "{0}" WHERE 
                                                 EMAIL='{1}' """.format(role, login_candidate))
@@ -138,6 +138,15 @@ class UserCreation:
         except cx_Oracle.DatabaseError:
             flash('ERROR')
         return user_fsl
+
+    def get_emp(self, email: str) -> tuple:
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT * FROM TABLE(WORK_PACK.GETUSER('{0}'))""".format(email))
+            stuff = self.__cursor.fetchone()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
 
     def add_user(self, email, password, first_name, second_name, last_name, address, phone, med_doc, sport_rank,
                  birthday):
@@ -151,6 +160,21 @@ class UserCreation:
                                                                sport_rank, birthday.isoformat()])
             self.__db.commit()
         except BaseException:
+            flash('DB ERROR')
+            pass
+
+    def update_user(self, email, role_name, first_name, second_name, last_name, address, phone, med_doc, sport_rank,
+                    birthday):
+        try:
+            self.__db.commit()
+            self.__cursor.callproc('WORK_PACK.UPDATEEMP',  [email, role_name,
+                                                            first_name,
+                                                            second_name,
+                                                            last_name, address,
+                                                            phone, med_doc,
+                                                            sport_rank, birthday.isoformat()])
+            self.__db.commit()
+        except cx_Oracle.DatabaseError:
             flash('DB ERROR')
             pass
 
@@ -198,7 +222,7 @@ def test_page():
     connection = cx_Oracle.connect(db_user, db_password, db_connect)
     cur = connection.cursor()
     # cur.execute("SELECT 'Hello, World from Oracle DB!' FROM DUAL")
-    cur.execute("SELECT * FROM \"User\"")
+    cur.execute("""SELECT * FROM "User" """)
     col = cur.fetchone()[0]
     cur.close()
     connection.close()
@@ -211,6 +235,22 @@ class RegisterForm(Form):
                                           validators.EqualTo('confirm_password',
                                                              message='Passwords do not match')])
     confirm_password = PasswordField('Confirm Password')
+    first_name = StringField('First Name', [validators.Length(min=1, max=256)])
+    second_name = StringField('Second Name', [validators.Length(min=1, max=256)])
+    last_name = StringField('Last Name', [validators.Length(min=1, max=256)])
+    address = StringField('Address', [validators.Length(min=1, max=256)])
+    phone = StringField('Phone Number', [validators.Length(min=2, max=15)])
+    # med_doc = FileField('Medical document',
+    #                     validators=[
+    #                         FileRequired(),
+    #                         FileAllowed(ALLOWED_EXTENSIONS, 'Only images like jpg png')])
+    sport_rank = StringField('Sport Rank', [validators.Length(min=1, max=256)])
+    birthday = DateField('Birthday', [validators.DataRequired(min(time.localtime()))])
+
+
+class EditEmpForm(Form):
+    email = StringField('Email', [validators.Length(min=1, max=254)])
+    role_name = StringField('Role Name', [validators.Length(min=1, max=256)])
     first_name = StringField('First Name', [validators.Length(min=1, max=256)])
     second_name = StringField('Second Name', [validators.Length(min=1, max=256)])
     last_name = StringField('Last Name', [validators.Length(min=1, max=256)])
@@ -370,15 +410,26 @@ def manage_emp():
         return redirect(url_for('index'))
 
 
-@app.route('/manage_emp/edit', methods=['GET', 'POST'])
+@app.route('/edit_emp', methods=['GET', 'POST'])
 @is_logged_in
 def edit_emp(user_email):
-    form = RegisterForm(request.form)
+    uc.__enter__()
+    user_data = uc.get_emp(user_email)
+    uc.__exit__()
+    form = EditEmpForm(request.form)
+    form.email.data = user_data[0]
+    form.role_name.data = user_data[1]
+    form.first_name.data = user_data[2]
+    form.second_name.data = user_data[3]
+    form.last_name.data = user_data[4]
+    form.address.data = user_data[5]
+    form.phone.data = user_data[6]
+    form.sport_rank.data = user_data[7]
+    form.birthday.data = user_data[8]
     if request.method == 'POST' and form.validate():
 
         email = form.email.data
-        password = sha256_crypt.encrypt(str(form.password.data))
-        confirm_password = form.confirm_password.data
+        role_name = form.role_name.data
         first_name = form.first_name.data
         second_name = form.second_name.data
         last_name = form.last_name.data
@@ -387,11 +438,12 @@ def edit_emp(user_email):
         sport_rank = form.sport_rank.data
         birthday = form.birthday.data
         uc.__enter__()
-        uc.add_user(email, password, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty', sport_rank, birthday)
+        uc.add_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
+                    sport_rank, birthday)
         uc.__exit__()
         flash('You are now registered and can log in', 'success')
-        return render_template('registration.html', form=form)
-    return render_template('registration.html', form=form)
+        return render_template('edit_emp.html', form=form)
+    return render_template('edit_emp.html', form=form)
 
 
 @app.route('/logout')
