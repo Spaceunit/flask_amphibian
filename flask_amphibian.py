@@ -513,6 +513,8 @@ def edit_emp(user_email):
     app.logger.info(user_email)
     app.logger.info(user_data)
     uc.__exit__()
+    if user_data is None:
+        return redirect(url_for('manage_emp'))
     form.email.data = user_data[0]
     form.role_name.data = user_data[1]
     form.first_name.data = user_data[2]
@@ -556,6 +558,8 @@ def edit_client(user_email):
     app.logger.info(user_email)
     app.logger.info(user_data)
     uc.__exit__()
+    if user_data is None:
+        return redirect(url_for('manage_client'))
     form.email.data = user_data[0]
     form.role_name.data = user_data[1]
     form.first_name.data = user_data[2]
@@ -599,6 +603,8 @@ def edit_guest(user_email):
     app.logger.info(user_email)
     app.logger.info(user_data)
     uc.__exit__()
+    if user_data is None:
+        return redirect(url_for('manage_guest'))
     form.email.data = user_data[0]
     form.role_name.data = user_data[1]
     form.first_name.data = user_data[2]
