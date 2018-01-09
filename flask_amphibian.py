@@ -410,23 +410,25 @@ def manage_emp():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_emp?<string:user_email>', methods=['GET', 'POST'])
+@app.route('/edit_emp', methods=['GET', 'POST'])
 @is_logged_in
 def edit_emp(user_email):
-    uc.__enter__()
-    user_data = uc.get_emp(user_email)
-    uc.__exit__()
     form = EditEmpForm(request.form)
-    form.email.data = user_data[0]
-    form.role_name.data = user_data[1]
-    form.first_name.data = user_data[2]
-    form.second_name.data = user_data[3]
-    form.last_name.data = user_data[4]
-    form.address.data = user_data[5]
-    form.phone.data = user_data[6]
-    form.sport_rank.data = user_data[7]
-    form.birthday.data = user_data[8]
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and user_email is not None:
+        uc.__enter__()
+        user_data = uc.get_emp(user_email)
+        uc.__exit__()
+        form.email.data = user_data[0]
+        form.role_name.data = user_data[1]
+        form.first_name.data = user_data[2]
+        form.second_name.data = user_data[3]
+        form.last_name.data = user_data[4]
+        form.address.data = user_data[5]
+        form.phone.data = user_data[6]
+        form.sport_rank.data = user_data[7]
+        form.birthday.data = user_data[8]
+        return render_template('edit_emp.html', form=form)
+    if request.method == 'POST' and form.validate() and user_email is None:
         email = form.email.data
         role_name = form.role_name.data
         first_name = form.first_name.data
@@ -437,10 +439,10 @@ def edit_emp(user_email):
         sport_rank = form.sport_rank.data
         birthday = form.birthday.data
         uc.__enter__()
-        uc.add_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
-                    sport_rank, birthday)
+        uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
+                       sport_rank, birthday)
         uc.__exit__()
-        flash('You are now registered and can log in', 'success')
+        flash('User is updated', 'success')
         return render_template('edit_emp.html', form=form)
     return render_template('edit_emp.html', form=form)
 
