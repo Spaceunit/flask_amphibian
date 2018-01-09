@@ -410,11 +410,12 @@ def manage_emp():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_emp?<string:user_email>', methods=['GET', 'POST'])
+@app.route('/edit_emp', methods=['POST'])
 @is_logged_in
-def edit_emp(user_email):
+def edit_emp():
     form = EditEmpForm(request.form)
-    if request.method == 'POST' and user_email is not None:
+    if request.method == 'POST' and 'user_email' in request.args:
+        user_email = request.args['user_email']
         uc.__enter__()
         user_data = uc.get_emp(user_email)
         uc.__exit__()
@@ -428,7 +429,7 @@ def edit_emp(user_email):
         form.sport_rank.data = user_data[7]
         form.birthday.data = user_data[8]
         return render_template('edit_emp.html', form=form)
-    if request.method == 'POST' and form.validate() and user_email is None:
+    if request.method == 'POST' and form.validate() and 'user_email' not in request.args:
         email = form.email.data
         role_name = form.role_name.data
         first_name = form.first_name.data
