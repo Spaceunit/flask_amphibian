@@ -492,6 +492,7 @@ def edit_emp(user_email):
     # user_email = request.args['user_email']
     uc.__enter__()
     user_data = uc.get_emp(user_email)
+    app.logger.info(user_email)
     app.logger.info(user_data)
     uc.__exit__()
     form.email.data = user_data[0]
