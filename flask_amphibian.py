@@ -503,6 +503,54 @@ def manage_client():
         return redirect(url_for('index'))
 
 
+@app.route('/manage_guest', methods=['GET', 'POST'])
+@is_logged_in
+def manage_guest():
+    form = SearchStuffForm(request.form)
+    if 'logged_in' in session and request.method == 'GET':
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_guest.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    elif 'logged_in' in session and request.method == 'POST' and form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            email = form.email.data
+            role_name = form.role_name.data
+            first_name = form.first_name.data
+            second_name = form.second_name.data
+            last_name = form.last_name.data
+            sport_rank = form.sport_rank.data
+            order = form.filter_switcher.data
+            app.logger.info('INPUT DATA IS')
+            app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
+            stuff_list = uc.get_client_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            uc.__exit__()
+            app.logger.info('STUFF LIST IS')
+            app.logger.info(stuff_list)
+            return render_template('manage_guest.html', form=form, stuff=stuff_list)
+        else:
+            return redirect(url_for('index'))
+
+    elif 'logged_in' in session and request.method == 'POST' and not form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_guest.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
+
+
 @app.route('/edit_emp?<string:user_email>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_emp(user_email):
