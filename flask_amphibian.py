@@ -86,7 +86,7 @@ class UserCreation:
         stuff = []
         try:
             app.logger.info("SQL IS\n" + """SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email_f => '%{0}%',
+                                     FROM TABLE(WORK_PACK.FILTERSTUFF(email_f => '%{0}%',
                                                                         role_name_f => '%{1}%',
                                                                         first_name_f => '%{2}%',
                                                                         second_name_f =>'%{3}%',
@@ -95,7 +95,7 @@ class UserCreation:
                                      {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
                                                    order.upper()))
             self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERSTUFF(email_f => '%{0}%',
+                                     FROM TABLE(WORK_PACK.FILTERSTUFF(email_f => '%{0}%',
                                                                         role_name_f => '%{1}%',
                                                                         first_name_f => '%{2}%',
                                                                         second_name_f =>'%{3}%',
@@ -113,7 +113,7 @@ class UserCreation:
         stuff = []
         try:
             self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
-                                     FROM TABLE(TASK_PAKAGE.FILTERCLIENT(email_f => '%{0}%',
+                                     FROM TABLE(WORK_PACK.FILTERCLIENT(email_f => '%{0}%',
                                                                         role_name_f => '%{1}%',
                                                                         first_name_f => '%{2}%',
                                                                         second_name_f =>'%{3}%',
