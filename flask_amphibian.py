@@ -427,7 +427,6 @@ def edit_emp(user_email):
     form.sport_rank.data = user_data[7]
     form.birthday.data = user_data[8]
     if request.method == 'POST' and form.validate():
-
         email = form.email.data
         role_name = form.role_name.data
         first_name = form.first_name.data
