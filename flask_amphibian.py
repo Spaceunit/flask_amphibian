@@ -447,7 +447,7 @@ def edit_emp(user_email):
                        birthday=birthday)
         uc.__exit__()
         flash('User is updated', 'success')
-        return render_template('edit_emp.html', form=form)
+        return redirect(url_for('edit_emp', user_email=email))
     return render_template('edit_emp.html', form=form)
 
 
