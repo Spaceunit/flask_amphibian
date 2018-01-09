@@ -108,6 +108,24 @@ class UserCreation:
             flash('ERROR', 'danger')
         return stuff
 
+    def get_client_data(self, email: str, role_name: str, first_name: str, second_name: str, last_name: str,
+                        sport_rank: str, order='email') -> list:
+        stuff = []
+        try:
+            self.__cursor.execute("""SELECT EMAIL, ROLE_NAME, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
+                                     FROM TABLE(TASK_PAKAGE.FILTERCLIENT(email_f => '%{0}%',
+                                                                        role_name_f => '%{1}%',
+                                                                        first_name_f => '%{2}%',
+                                                                        second_name_f =>'%{3}%',
+                                                                        last_name_f => '%{4}%',
+                                                                        sport_rank_f => '%{5}%')) ORDER BY 
+                                     {6}""".format(email, role_name, first_name, second_name, last_name, sport_rank,
+                                                   order.upper()))
+            stuff = self.__cursor.fetchall()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
+
     def get_user_login_data(self, login_candidate, password_candidate):
         h_password = ' '
         try:
@@ -413,6 +431,54 @@ def manage_emp():
             session['user_role'] = user_role
             uc.__exit__()
             return render_template('manage_emp.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/manage_client', methods=['GET', 'POST'])
+@is_logged_in
+def manage_client():
+    form = SearchStuffForm(request.form)
+    if 'logged_in' in session and request.method == 'GET':
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_client.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    elif 'logged_in' in session and request.method == 'POST' and form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            email = form.email.data
+            role_name = form.role_name.data
+            first_name = form.first_name.data
+            second_name = form.second_name.data
+            last_name = form.last_name.data
+            sport_rank = form.sport_rank.data
+            order = form.filter_switcher.data
+            app.logger.info('INPUT DATA IS')
+            app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
+            stuff_list = uc.get_client_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            uc.__exit__()
+            app.logger.info('STUFF LIST IS')
+            app.logger.info(stuff_list)
+            return render_template('manage_client.html', form=form, stuff=stuff_list)
+        else:
+            return redirect(url_for('index'))
+
+    elif 'logged_in' in session and request.method == 'POST' and not form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_client.html', form=form)
         else:
             return redirect(url_for('index'))
     else:
