@@ -509,7 +509,7 @@ def manage_user():
 @is_logged_in
 def edit_user():
     form = EditEmpForm(request.form)
-    user_email = request.args['user_email']
+    user_email = request.args['_email']
     uc.__enter__()
     if '_role' in request.form:
         if request.form['_role'] == 'Admin' or request.form['_role'] == 'Coach':
