@@ -9,7 +9,7 @@ from flask_session import Session
 from flask import render_template
 from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, BooleanField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, SelectMultipleField, validators
 from werkzeug.utils import secure_filename
 from passlib.hash import sha256_crypt
 from functools import wraps
@@ -361,15 +361,15 @@ class EditEmpForm(Form):
 
 class SearchStuffForm(Form):
     email = StringField('Email', [validators.Length(max=254)])
-    role_name = BooleanField('Role Name',
-                             [validators.DataRequired()],
-                             choices=[
-                                 ('Admin', 'Адміністратор'),
-                                 ('Coach', 'Тренер'),
-                                 ('Client', 'Клієнт'),
-                                 ('Guest', 'Гість'),
-                             ], default='Admin'
-                             )
+    role_name = SelectMultipleField('Role Name',
+                                     [validators.DataRequired()],
+                                     choices=[
+                                         ('Admin', 'Адміністратор'),
+                                         ('Coach', 'Тренер'),
+                                         ('Client', 'Клієнт'),
+                                         ('Guest', 'Гість'),
+                                     ], default='Admin'
+                                     )
     first_name = StringField('First Name', [validators.Length(max=256)])
     second_name = StringField('Second Name', [validators.Length(max=256)])
     last_name = StringField('Last Name', [validators.Length(max=256)])
