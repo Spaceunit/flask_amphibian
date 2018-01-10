@@ -42,7 +42,9 @@ INSERT_USER_VALUES = ('USER_ID', 'EMAIL', 'ROLE_NAME_FK', 'FIRST_NAME', 'SECOND_
 
 INSERT_USER_VALUES_DICT = {item.upper(): None for item in INSERT_USER_VALUES}
 
-USER_DATA_PROC_LIST = (('Admin', 'Coach', 'Client', 'Guest'), ('FILTERSTUFF', 'FILTERSTUFF', 'FILTERCLIENT', 'FILTERGUEST'))
+USER_DATA_PROC_LIST = (('Admin', 'Coach', 'Client', 'Guest'),
+                       ('FILTERSTUFF', 'FILTERSTUFF', 'FILTERCLIENT', 'FILTERGUEST'),
+                       )
 
 
 class ValuesDict:
@@ -465,7 +467,7 @@ def manage_user():
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
             uc.__exit__()
-            return render_template('manage_emp.html', form=form, role=user_role)
+            return render_template('manage_user.html', form=form, role=user_role)
         else:
             return redirect(url_for('index'))
     elif 'logged_in' in session and request.method == 'POST' and form.validate():
@@ -486,7 +488,7 @@ def manage_user():
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
             app.logger.info(stuff_list)
-            return render_template('manage_emp.html', form=form, stuff=stuff_list)
+            return render_template('manage_user.html', form=form, stuff=stuff_list)
         else:
             return redirect(url_for('index'))
 
@@ -496,20 +498,26 @@ def manage_user():
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
             uc.__exit__()
-            return render_template('manage_emp.html', form=form)
+            return render_template('manage_user.html', form=form)
         else:
             return redirect(url_for('index'))
     else:
         return redirect(url_for('index'))
 
 
-@app.route('/edit_user?<string:user_email>', methods=['GET', 'POST'])
+@app.route('/edit_user/<string:user_email>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_user(user_email):
     form = EditEmpForm(request.form)
     # user_email = request.args['user_email']
     uc.__enter__()
-    user_data = uc.get_emp(user_email)
+    if '_role' in request.form:
+        if request.form['_role'] == 'Admin' or request.form['_role'] == 'Coach':
+            user_data = uc.get_emp(user_email)
+        elif request.form['_role'] == 'Client':
+            user_data = uc.get_client(user_email)
+        elif request.form['_role'] == 'Guest':
+            user_data = uc.get_guest(user_email)
     app.logger.info(user_email)
     app.logger.info(user_data)
     uc.__exit__()
