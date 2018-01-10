@@ -9,7 +9,7 @@ from flask_session import Session
 from flask import render_template
 from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, SelectMultipleField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, , validators
 from werkzeug.utils import secure_filename
 from passlib.hash import sha256_crypt
 from functools import wraps
