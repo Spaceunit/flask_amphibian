@@ -9,7 +9,7 @@ from flask_session import Session
 from flask import render_template
 from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, validators
+from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, DateTimeField, RadioField, BooleanField, validators
 from werkzeug.utils import secure_filename
 from passlib.hash import sha256_crypt
 from functools import wraps
@@ -361,7 +361,15 @@ class EditEmpForm(Form):
 
 class SearchStuffForm(Form):
     email = StringField('Email', [validators.Length(max=254)])
-    role_name = StringField('Role Name', [validators.Length(max=254)])
+    role_name = BooleanField('Role Name',
+                             [validators.DataRequired()],
+                             choices=[
+                                 ('Admin', 'Адміністратор'),
+                                 ('Coach', 'Тренер'),
+                                 ('Client', 'Клієнт'),
+                                 ('Guest', 'Гість'),
+                             ], default='Admin'
+                             )
     first_name = StringField('First Name', [validators.Length(max=256)])
     second_name = StringField('Second Name', [validators.Length(max=256)])
     last_name = StringField('Last Name', [validators.Length(max=256)])
@@ -484,7 +492,7 @@ def manage_user():
             order = form.filter_switcher.data
             app.logger.info('INPUT DATA IS')
             app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
-            stuff_list = uc.get_stuff_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            stuff_list = uc.get_user_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
             app.logger.info(stuff_list)
