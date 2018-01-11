@@ -492,9 +492,9 @@ def manage_user():
     if 'logged_in' in session and request.method == 'GET':
         if session['user_role'] == 'Admin':
             uc.__enter__()
-            user_role = uc.get_user_role(session['username'])
-            session['user_role'] = user_role
-            if user_role != 'Admin':
+            _user_role = uc.get_user_role(session['username'])
+            session['user_role'] = _user_role
+            if _user_role != 'Admin':
                 uc.__exit__()
                 return redirect(url_for('index'))
             else:
@@ -545,7 +545,7 @@ def edit_user(user_email, user_role):
         if session['user_role'] == 'Admin':
             uc.__enter__()
             _user_role = uc.get_user_role(session['username'])
-            session['user_role'] = user_role
+            session['user_role'] = _user_role
             if _user_role != 'Admin':
                 uc.__exit__()
                 return redirect(url_for('index'))
