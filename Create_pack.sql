@@ -472,6 +472,15 @@ INNER JOIN "User" ON TEAM.COACH_ID_FK="User".USER_ID
 INNER JOIN "User" ON S1.MEMBER_ID_FK="User".USER_ID;
 COMMIT;
 
+CREATE OR REPLACE VIEW "Team_member" AS
+SELECT S1.COACH_EMAIL, "User".EMAIL MEMBER_EMAIL, S1.TEAM_NAME FROM
+(
+SELECT "User".EMAIL COACH_EMAIL, TEAM.MEMBER_ID_FK MEMBER_ID_FK, TEAM.TEAM_NAME TEAM_NAME FROM TEAM
+INNER JOIN "User" ON TEAM.COACH_ID_FK="User".USER_ID
+) S1
+INNER JOIN "User" ON S1.MEMBER_ID_FK="User".USER_ID;
+COMMIT;
+
 /*==============================================================*/
 /* PROCEDURES                                               */
 /*==============================================================*/

@@ -186,6 +186,35 @@ class UserCreation:
             flash('ERROR', 'danger')
         return stuff
 
+    def get_team_member_data(self, email: str, role_list: tuple, first_name: str, second_name: str, last_name: str,
+                        sport_rank: str, order='email') -> list:
+        stuff = []
+        if len(role_list) == 0:
+            role_list = USER_DATA_PROC_LIST[0]
+
+        query_sample = """SELECT TEAM_NAME, COACH_EMAIL, MEMBER_EMAIL, FIRST_NAME, SECOND_NAME, LAST_NAME, SPORT_RANK
+                                     FROM TABLE(WORK_PACK.FILTERTEAMMEMBER(team_name_f => '%{0}%',
+                                                                          email_f => '%{1}%',
+                                                                          first_name_f => '%{3}%',
+                                                                          second_name_f =>'%{4}%',
+                                                                          last_name_f => '%{5}%',
+                                                                          sport_rank_f => '%{6}%'))"""
+        complex_query = ' UNION '.join([query_sample.format(USER_DATA_PROC_LIST[1][USER_DATA_PROC_LIST[0].index(role_name)],
+                                                            email,
+                                                            role_name,
+                                                            first_name,
+                                                            second_name,
+                                                            last_name,
+                                                            sport_rank
+                                                            ) for role_name in role_list]) + ' ORDER BY ' + order
+        try:
+            self.__cursor.execute(complex_query)
+            stuff = self.__cursor.fetchall()
+        except cx_Oracle.DatabaseError:
+            flash('ERROR', 'danger')
+        return stuff
+
+
     def get_user_login_data(self, login_candidate, password_candidate):
         h_password = ' '
         try:
@@ -539,6 +568,58 @@ def manage_user():
             session['user_role'] = user_role
             uc.__exit__()
             return render_template('manage_user.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/manage_team', methods=['GET', 'POST'])
+@is_logged_in
+def manage_team():
+    form = SearchStuffForm(request.form)
+    if 'logged_in' in session and request.method == 'GET':
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            _user_role = uc.get_user_role(session['username'])
+            session['user_role'] = _user_role
+            if _user_role != 'Admin':
+                uc.__exit__()
+                return redirect(url_for('index'))
+            else:
+                uc.__exit__()
+                return render_template('manage_team.html', form=form)
+        else:
+            return redirect(url_for('index'))
+    elif 'logged_in' in session and request.method == 'POST' and form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            email = form.email.data
+            role_name = form.role_name.data
+            first_name = form.first_name.data
+            second_name = form.second_name.data
+            last_name = form.last_name.data
+            sport_rank = form.sport_rank.data
+            order = form.filter_switcher.data
+            app.logger.info('INPUT DATA IS')
+            app.logger.info(', '.join([email, '['+', '.join(role_name)+']', first_name, second_name, last_name, sport_rank, order]))
+            stuff_list = uc.get_user_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
+            uc.__exit__()
+            app.logger.info('STUFF LIST IS')
+            app.logger.info(stuff_list)
+            return render_template('manage_team.html', form=form, stuff=stuff_list, localization=ROLE_IN_UKR)
+        else:
+            return redirect(url_for('index'))
+
+    elif 'logged_in' in session and request.method == 'POST' and not form.validate():
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            uc.__exit__()
+            return render_template('manage_team.html', form=form)
         else:
             return redirect(url_for('index'))
     else:
