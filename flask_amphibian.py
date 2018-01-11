@@ -494,8 +494,12 @@ def manage_user():
             uc.__enter__()
             user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
-            uc.__exit__()
-            return render_template('manage_user.html', form=form, role=user_role)
+            if user_role != 'Admin':
+                uc.__exit__()
+                return redirect(url_for('index'))
+            else:
+                uc.__exit__()
+                return render_template('manage_user.html', form=form, role=user_role)
         else:
             return redirect(url_for('index'))
     elif 'logged_in' in session and request.method == 'POST' and form.validate():
@@ -537,60 +541,73 @@ def manage_user():
 @is_logged_in
 def edit_user(user_email, user_role):
     form = EditEmpForm(request.form)
-    # user_email = request.args['_email']
-    uc.__enter__()
-    user_data = []
-    if user_role is not None:
-        if user_role == 'Admin' or user_role == 'Coach':
-            user_data = uc.get_emp(user_email)
-        elif user_role == 'Client':
-            user_data = uc.get_client(user_email)
-        elif user_role == 'Guest':
-            user_data = uc.get_guest(user_email)
-    app.logger.info(user_email)
-    app.logger.info(user_data)
-    uc.__exit__()
-    if user_data is None:
-        return redirect(url_for('manage_user'))
-    form.email.data = user_data[0]
-    form.role_name.data = user_data[1]
-    form.first_name.data = user_data[2]
-    form.second_name.data = user_data[3]
-    form.last_name.data = user_data[4]
-    form.address.data = user_data[5]
-    form.phone.data = user_data[6]
-    form.sport_rank.data = user_data[7]
-    form.birthday.data = user_data[8]
+    if 'logged_in' in session and request.method == 'GET':
+        if session['user_role'] == 'Admin':
+            uc.__enter__()
+            user_role = uc.get_user_role(session['username'])
+            session['user_role'] = user_role
+            if user_role != 'Admin':
+                uc.__exit__()
+                return redirect(url_for('index'))
+            # uc.__exit__()
+            # # user_email = request.args['_email']
+            # uc.__enter__()
+            user_data = []
+            if user_role is not None:
+                if user_role == 'Admin' or user_role == 'Coach':
+                    user_data = uc.get_emp(user_email)
+                elif user_role == 'Client':
+                    user_data = uc.get_client(user_email)
+                elif user_role == 'Guest':
+                    user_data = uc.get_guest(user_email)
+            app.logger.info(user_email)
+            app.logger.info(user_data)
+            uc.__exit__()
+            if user_data is None:
+                return redirect(url_for('manage_user'))
+            form.email.data = user_data[0]
+            form.role_name.data = user_data[1]
+            form.first_name.data = user_data[2]
+            form.second_name.data = user_data[3]
+            form.last_name.data = user_data[4]
+            form.address.data = user_data[5]
+            form.phone.data = user_data[6]
+            form.sport_rank.data = user_data[7]
+            form.birthday.data = user_data[8]
+            return render_template('edit_user.html', form=form)
+        else:
+            return redirect(url_for('index'))
 
-    if request.method == 'POST' and form.validate():
-        email = request.form['email']
-        role_name = request.form['role_name']
-        first_name = request.form['first_name']
-        second_name = request.form['second_name']
-        last_name = request.form['last_name']
-        address = request.form['address']
-        phone = request.form['phone']
-        sport_rank = request.form['sport_rank']
-        birthday = request.form['birthday']
-        uc.__enter__()
-        # flash(birthday)
-        # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
-        #                sport_rank, birthday)
-        uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
-                       address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
-                       birthday=birthday)
-        uc.__exit__()
-        form.email.data = email
-        form.role_name.data = role_name
-        form.first_name.data = first_name
-        form.second_name.data = second_name
-        form.last_name.data = last_name
-        form.address.data = address
-        form.phone.data = phone
-        form.sport_rank.data = sport_rank
-        form.birthday.data = birthday
-        flash('User is updated', 'success')
-        return render_template('edit_user.html', form=form)
+    elif 'logged_in' in session and request.method == 'POST' and form.validate():
+        if session['user_role'] == 'Admin':
+            email = request.form['email']
+            role_name = request.form['role_name']
+            first_name = request.form['first_name']
+            second_name = request.form['second_name']
+            last_name = request.form['last_name']
+            address = request.form['address']
+            phone = request.form['phone']
+            sport_rank = request.form['sport_rank']
+            birthday = request.form['birthday']
+            uc.__enter__()
+            # flash(birthday)
+            # uc.update_user(email, role_name, first_name, second_name, last_name, address, phone, UPLOAD_FOLDER + '/empty',
+            #                sport_rank, birthday)
+            uc.update_user(email=email, role_name=role_name, first_name=first_name, second_name=second_name, last_name=last_name,
+                           address=address, phone=phone, med_doc=UPLOAD_FOLDER + '/empty', sport_rank=sport_rank,
+                           birthday=birthday)
+            uc.__exit__()
+            form.email.data = email
+            form.role_name.data = role_name
+            form.first_name.data = first_name
+            form.second_name.data = second_name
+            form.last_name.data = last_name
+            form.address.data = address
+            form.phone.data = phone
+            form.sport_rank.data = sport_rank
+            form.birthday.data = birthday
+            flash('User is updated', 'success')
+            return render_template('edit_user.html', form=form)
     return render_template('edit_user.html', form=form)
 
 
