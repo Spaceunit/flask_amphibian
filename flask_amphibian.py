@@ -533,7 +533,7 @@ def manage_user():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_user/<string:user_email>/<string:user_role>', methods=['GET', 'POST'])
+@app.route('/edit_user?<string:user_email>;<string:user_role>', methods=['GET', 'POST'])
 @is_logged_in
 def edit_user(user_email, user_role):
     form = EditEmpForm(request.form)
