@@ -539,6 +539,7 @@ def edit_user():
     form = EditEmpForm(request.form)
     user_email = request.args['_email']
     uc.__enter__()
+    user_data = []
     if '_role' in request.form:
         if request.form['_role'] == 'Admin' or request.form['_role'] == 'Coach':
             user_data = uc.get_emp(user_email)
