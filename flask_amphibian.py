@@ -24,8 +24,10 @@ ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif', 'pdf'])
 images = UploadSet('images', IMAGES)
 # SESSION_TYPE = 'cookie'
 
+
 def create_app(sess):
     app = Flask(__name__)
+    app.config.from_object(__name__)
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['SESSION_TYPE'] = 'filesystem'
     app.secret_key = 'A0Zr98j/3yXR~XHH!jmN]LWX/,?RT'
@@ -45,6 +47,11 @@ INSERT_USER_VALUES_DICT = {item.upper(): None for item in INSERT_USER_VALUES}
 USER_DATA_PROC_LIST = (('Admin', 'Coach', 'Client', 'Guest'),
                        ('FILTERSTUFF', 'FILTERSTUFF', 'FILTERCLIENT', 'FILTERGUEST'),
                        )
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class ValuesDict:
@@ -315,6 +322,14 @@ def test_page():
     return render_template('test_page.html', info=col[0])
 
 
+class SimpleForm(Form):
+    string_of_files = ['Admin\r\nCoach\r\nClient\r\nGuest\r\n']
+    list_of_files = string_of_files[0].split()
+    # create a list of value/description tuples
+    files = [(x, x) for x in list_of_files]
+    example = MultiCheckboxField('Role', choices=files)
+
+
 class RegisterForm(Form):
     email = StringField('Email', [validators.Length(min=1, max=254)])
     password = PasswordField('Password', [validators.DataRequired(),
@@ -513,11 +528,11 @@ def manage_user():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_user', methods=['GET', 'POST'])
+@app.route('/edit_user/<string:user_email>', methods=['GET', 'POST'])
 @is_logged_in
-def edit_user():
+def edit_user(user_email):
     form = EditEmpForm(request.form)
-    user_email = request.args['_email']
+    # user_email = request.args['_email']
     uc.__enter__()
     if '_role' in request.form:
         if request.form['_role'] == 'Admin' or request.form['_role'] == 'Coach':
