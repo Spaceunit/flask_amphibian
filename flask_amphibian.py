@@ -352,7 +352,7 @@ class RegisterForm(Form):
 class EditEmpForm(Form):
     email = StringField('Email', [validators.Length(min=1, max=254)])
     role_name = RadioField(
-        'Order by',
+        'Роль',
         [validators.DataRequired()],
         choices=[
                 ('Admin', 'Адміністратор'),
