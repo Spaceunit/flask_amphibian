@@ -533,11 +533,11 @@ def manage_user():
         return redirect(url_for('index'))
 
 
-@app.route('/edit_user/<string:user_email>', methods=['GET', 'POST'])
+@app.route('/edit_user', methods=['GET', 'POST'])
 @is_logged_in
-def edit_user(user_email):
+def edit_user():
     form = EditEmpForm(request.form)
-    # user_email = request.args['_email']
+    user_email = request.args['_email']
     uc.__enter__()
     if '_role' in request.form:
         if request.form['_role'] == 'Admin' or request.form['_role'] == 'Coach':
