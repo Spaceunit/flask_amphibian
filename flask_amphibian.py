@@ -544,9 +544,9 @@ def edit_user(user_email, user_role):
     if 'logged_in' in session and request.method == 'GET':
         if session['user_role'] == 'Admin':
             uc.__enter__()
-            user_role = uc.get_user_role(session['username'])
+            _user_role = uc.get_user_role(session['username'])
             session['user_role'] = user_role
-            if user_role != 'Admin':
+            if _user_role != 'Admin':
                 uc.__exit__()
                 return redirect(url_for('index'))
             # uc.__exit__()
