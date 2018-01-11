@@ -355,10 +355,10 @@ class EditEmpForm(Form):
         'Роль',
         [validators.DataRequired()],
         choices=[
-                ('Admin', 'Адміністратор'),
-                ('Coach', 'Тренер'),
-                ('Client', 'Клієнт'),
-                ('Guest', 'Гість'),
+                ('Адміністратор', 'Admin'),
+                ('Тренер', 'Coach'),
+                ('Клієнт', 'Client'),
+                ('Гість', 'Guest'),
                 ]
     )
     first_name = StringField('First Name', [validators.Length(min=1, max=256)])
