@@ -499,7 +499,7 @@ def manage_user():
                 return redirect(url_for('index'))
             else:
                 uc.__exit__()
-                return render_template('manage_user.html', form=form, role=user_role)
+                return render_template('manage_user.html', form=form)
         else:
             return redirect(url_for('index'))
     elif 'logged_in' in session and request.method == 'POST' and form.validate():
