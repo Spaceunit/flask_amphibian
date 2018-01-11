@@ -81,7 +81,7 @@
                 {% for coworker in stuff %}
                     <tr>
                         <td>{{ coworker[0] }}</td>
-                        <td>{{ coworker[1] }}</td>
+                        <td>{{ localization[1][localization[0].index(coworker[1])] }}</td>
                         <td>{{ coworker[2] }}</td>
                         <td>{{ coworker[3] }}</td>
                         <td>{{ coworker[4] }}</td>

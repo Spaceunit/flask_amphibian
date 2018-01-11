@@ -48,6 +48,9 @@ USER_DATA_PROC_LIST = (('Admin', 'Coach', 'Client', 'Guest'),
                        ('FILTERSTUFF', 'FILTERSTUFF', 'FILTERCLIENT', 'FILTERGUEST'),
                        )
 
+ROLE_IN_UKR = (('Admin', 'Coach', 'Client', 'Guest'),
+               ('Адміністратор', 'Тренер', 'Клієнт', 'Гість'))
+
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
@@ -521,7 +524,7 @@ def manage_user():
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
             app.logger.info(stuff_list)
-            return render_template('manage_user.html', form=form, stuff=stuff_list)
+            return render_template('manage_user.html', form=form, stuff=stuff_list, localization=ROLE_IN_UKR)
         else:
             return redirect(url_for('index'))
 
