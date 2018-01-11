@@ -376,15 +376,20 @@ class EditEmpForm(Form):
 
 class SearchStuffForm(Form):
     email = StringField('Email', [validators.Length(max=254)])
-    role_name = SelectMultipleField('Role Name',
-                                     [validators.DataRequired()],
-                                     choices=[
-                                         ('Admin', 'Адміністратор'),
-                                         ('Coach', 'Тренер'),
-                                         ('Client', 'Клієнт'),
-                                         ('Guest', 'Гість'),
-                                     ], default='Admin'
-                                     )
+    # role_name = SelectMultipleField('Role Name',
+    #                                  [validators.DataRequired()],
+    #                                  choices=[
+    #                                      ('Admin', 'Адміністратор'),
+    #                                      ('Coach', 'Тренер'),
+    #                                      ('Client', 'Клієнт'),
+    #                                      ('Guest', 'Гість'),
+    #                                  ], default='Admin'
+    #                                  )
+    string_of_files = ['Admin\r\nCoach\r\nClient\r\nGuest\r\n']
+    list_of_files = string_of_files[0].split()
+    # create a list of value/description tuples
+    files = [(x, x) for x in list_of_files]
+    role_name = MultiCheckboxField('Role', choices=files)
     first_name = StringField('First Name', [validators.Length(max=256)])
     second_name = StringField('Second Name', [validators.Length(max=256)])
     last_name = StringField('Last Name', [validators.Length(max=256)])
