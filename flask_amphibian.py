@@ -511,7 +511,7 @@ def manage_user():
             sport_rank = form.sport_rank.data
             order = form.filter_switcher.data
             app.logger.info('INPUT DATA IS')
-            app.logger.info(', '.join([email, role_name, first_name, second_name, last_name, sport_rank, order]))
+            app.logger.info(', '.join([email, '['+', '.join(role_name)+']', first_name, second_name, last_name, sport_rank, order]))
             stuff_list = uc.get_user_data(email, role_name, first_name, second_name, last_name, sport_rank, order)
             uc.__exit__()
             app.logger.info('STUFF LIST IS')
