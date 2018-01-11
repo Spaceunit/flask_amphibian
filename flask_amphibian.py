@@ -389,7 +389,8 @@ class SearchStuffForm(Form):
     list_of_files = string_of_files[0].split()
     # create a list of value/description tuples
     files = [(x, x) for x in list_of_files]
-    role_name = MultiCheckboxField('Role', choices=files)
+    role_name = MultiCheckboxField('Роль', choices=[('Адміністратор', 'Admin'),
+                                                    ('Тренер', 'Coach'), ('Клієнт', 'Client'), ('Гість', 'Guest')])
     first_name = StringField('First Name', [validators.Length(max=256)])
     second_name = StringField('Second Name', [validators.Length(max=256)])
     last_name = StringField('Last Name', [validators.Length(max=256)])
